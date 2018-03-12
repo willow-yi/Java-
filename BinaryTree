@@ -1,0 +1,112 @@
+/*二叉树的遍历:
+先序遍历(DLR)
+  访问根节点;
+ 	访问根节点
+  	按先序遍历访问左子树
+  	按先序遍历访问右子树
+中序遍历(LRD)
+	按中序遍历左子树
+	访问根节点
+	按中序遍历访问右子树
+后序遍历
+	按后序遍历访问左子树
+	按后序遍历访问右子树
+ 	访问根节点
+*/
+
+import java.util.*;
+
+public class BinaryTreeFactory {
+
+	private static List<BTNode> nodes;
+	
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		String[] s = sc.nextLine().trim().split(" ");
+		int[] arr = new int[s.length];//用数组存储输入的数据
+		for(int i=0; i<arr.length; i++){
+			arr[i] = Integer.parseInt(s[i]);
+		}
+		
+		creatTree(arr);
+		preOrder(nodes.get(0));
+		System.out.println();
+		inOrder(nodes.get(0));
+		System.out.println();
+		lastOrder(nodes.get(0));
+	}
+	
+	public static void creatTree(int[] arr){
+		BinaryTreeFactory btf = new BinaryTreeFactory();
+		nodes = new LinkedList<BTNode>();
+		for(int i=0; i<arr.length; i++){
+			//将数组内的元素生成一个个单独的结点
+			BTNode n = btf.new BTNode(arr[i]);
+			nodes.add(n);
+		}
+		
+		for(int i=0; i<nodes.size()/2; i++){
+			nodes.get(i).left = nodes.get(2*i+1);
+			if((2*i+2)<nodes.size()){
+				nodes.get(i).right = nodes.get(2*i+2);
+			}
+		}
+	}
+	//先序遍历二叉树
+	public static void preOrder(BTNode n){
+		if(n != null){
+			System.out.print(n.getWeight()+" ");
+			preOrder(n.left);
+			preOrder(n.right);
+		}
+	}
+	//中序遍历二叉树
+	public static void inOrder(BTNode n){
+		if(n != null){
+			inOrder(n.left);
+			System.out.print(n.getWeight()+" ");
+			inOrder(n.right);
+		}
+	}
+	//后序遍历二叉树
+	public static void lastOrder(BTNode n){
+		if(n != null){
+			lastOrder(n.left);
+			lastOrder(n.right);
+			System.out.print(n.getWeight()+" ");
+		}
+	}
+	//二叉树的结点类
+	class BTNode {
+		private BTNode left;//左子树
+		private BTNode right;//右子树
+		private int weight;
+		
+		public BTNode(int weight) {
+			this.weight = weight;
+			this.left = null;
+			this.right = null;
+		}
+		
+		public int getWeight() {
+			return weight;
+		}
+		public void setWeight(int weight) {
+			this.weight = weight;
+		}
+		
+		public BTNode getLeft() {
+			return left;
+		}
+		public void setLeft(BTNode left) {
+			this.left = left;
+		}
+		
+		public BTNode getRight() {
+			return right;
+		}
+		public void setRight(BTNode right) {
+			this.right = right;
+		}
+	}
+}
