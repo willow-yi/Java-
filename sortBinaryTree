@@ -1,0 +1,83 @@
+排序二叉树： 对于一个排序二叉树添加新节点时，先与根节点比较，若小则交给左子树继续处理，否则交给右子树。
+            当遇到空子树时，则把该节点放入那个位置。
+
+
+import java.util.*;
+public class Main {
+	
+	class Node{
+		Node left;
+		Node right;
+		int weight;
+		Node(int weight){
+			this.weight = weight;
+			left = null;
+			right = null;
+		}
+		
+		//override
+		public String toString(){
+			return ""+this.weight;
+		}
+	}
+	
+	public static void main(String[] args) {
+		Main m = new Main();
+		Scanner sc = new Scanner(System.in);
+		String[] s = sc.nextLine().trim().split(" ");
+		int[] num = new int[s.length];
+		for(int i=0; i<s.length; i++){
+			num[i] = Integer.parseInt(s[i]);
+		}
+		/*
+		for(int i=0; i<num.length; i++){
+			System.out.print(num[i]+" ");
+		}
+		*/
+		
+		LinkedList<Node> tree = new LinkedList<Node>();
+		
+		for(int i=0; i<num.length; i++){
+			Node n = m.new Node(num[i]);
+			if(tree.size()==0){
+				tree.add(n);
+			}else{
+				tree.add(n);
+				creat(n,tree.get(0));
+			}
+		}
+		/*
+		for(int i=0; i<tree.size(); i++){
+			System.out.println("左子树" + tree.get(i).left + " " + 
+								"右子树" + tree.get(i).right + " "+ 
+								"自身权值为" + tree.get(i).weight);
+		}
+		*/
+		System.out.println("先序遍历：");
+		preOrder(tree.get(0));
+	}
+	
+	public static void creat(Node n, Node t){
+		if(n.weight<t.weight){
+			if(t.left==null){
+				t.left = n;
+			}else{
+				creat(n, t.left);
+			}
+		}else{
+			if(t.right==null){
+				t.right = n;
+			}else{
+				creat(n, t.right);
+			}
+		}
+	}
+
+	public static void preOrder(Node n){
+		if(n != null){
+			System.out.print(n+" ");
+			preOrder(n.left);
+			preOrder(n.right);
+		}
+	}
+}
