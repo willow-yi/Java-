@@ -1,1 +1,85 @@
-割点：如果除去这个点，这个图的其他点将无法全部连通
+//割点：如果除去这个点，这个图的其他点将无法全部连通
+//建立一个图，从第一个节点开始遍历，找出图中所有割点
+import java.util.*;
+
+public class Main {
+
+	static class Node {
+		int num;//遍历时顺序
+		int low;//删去父节点时所能到达的最早遍历到的遍历顺序
+		Node parent;
+		List<Node> children;//此节点关联着的点
+		boolean visited;//是否已经被遍历
+		int data;
+		public Node(int data) {
+			this.data = data;
+			this.children = new LinkedList<Node>();  
+		}
+		
+	}
+	
+	static int index = 1;//记录遍历到的顺序
+	static List<Node> points = new LinkedList<Node>();
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		int n = sc.nextInt();
+		int m = sc.nextInt();
+		LinkedList<Node> nodes = new LinkedList<Node>();
+		nodes.add(new Node(0));
+		for(int i=1; i<=n; i++) {
+			nodes.add(new Node(i)); 
+		}
+		
+		for(int i=0; i<m; i++) {
+			int u = sc.nextInt();
+			int v = sc.nextInt();
+			nodes.get(u).children.add(nodes.get(v));
+			nodes.get(v).children.add(nodes.get(u));
+		}
+		DF(nodes.get(1));
+		System.out.println("一共有"+points.size()+"个割点");
+		System.out.print("分别为:");
+		for(Node w:points){
+			System.out.print(w.data+" ");
+		}
+		
+		/*
+		 * 输出当前图的结点连接情况
+		for(int i=0; i<nodes.size(); i++) {
+			System.out.print(nodes.get(i).data+"的孩子节点有：  ");
+			for(int j=0; j<nodes.get(i).children.size(); j++) {
+				
+				System.out.print(nodes.get(i).children.get(j).data+" ");
+			}
+			System.out.println();
+		}
+		*/
+	}
+	public static void DF(Node n) {
+			List<Node> child = n.children;
+			n.num = index++;
+			n.low = n.num;
+			n.visited = true;
+			for(int i=0; i<child.size(); i++) {
+				Node node = child.get(i);
+				if(!node.visited) {
+					node.parent = n;
+					DF(node);
+					
+					if(node.low >= n.num && n.num!=1) {
+						if(!points.contains(n)){
+							points.add(n);//此点为割点
+						}
+						
+					}	
+					n.low = Math.min(n.low, node.low);
+				}
+				else{
+					if(n.parent!=null && n.parent.data!=node.data){
+						n.low = Math.min(n.low, node.num);
+					}
+				}
+			}
+	}
+
+}
