@@ -83,3 +83,140 @@ public class Main {
 	}
 
 }
+//蓝桥杯危险系数
+//题目
+标题：危险系数
+
+抗日战争时期，冀中平原的地道战曾发挥重要作用。
+
+地道的多个站点间有通道连接，形成了庞大的网络。但也有隐患，当敌人发现了某个站点后，其它站点间可能因此会失去联系。
+
+我们来定义一个危险系数DF(x,y)：
+对于两个站点x和y (x != y), 如果能找到一个站点z，当z被敌人破坏后，x和y不连通，那么我们称z为关于x,y的关键点。
+相应的，对于任意一对站点x和y，危险系数DF(x,y)就表示为这两点之间的关键点个数。
+
+本题的任务是：已知网络结构，求两站点之间的危险系数。
+
+
+输入数据第一行包含2个整数n(2 <= n <= 1000), m(0 <= m <= 2000),分别代表站点数(编号从1至n)，通道数；
+接下来m行，每行两个整数 u,v (1 <= u, v <= n; u != v)代表一条通道；
+最后1行，两个数u,v，代表询问两点之间的危险系数DF(u, v)。
+
+输出：一个整数，如果询问的两点不连通则输出-1.
+例如：
+用户输入：
+7 6
+
+1 3
+2 3
+3 4
+3 5
+4 5
+5 6
+
+1 6
+则程序应该输出：
+2
+//答案 copy的别人的代码 先暂时存一下 明天再来仔细看看
+题目中描述的关键点，实际上是割点。[百度百科 割点](http://baike.baidu.com/link?url=CADx69vKhMWBfO_8DGociylhjOPxiY2yQ4N4ZqFDn8TPRLZwCVx1ITMtofY7HK_QOgp8lM5CbERD1XQvkSZMCK)
+如果在图G中去掉一个顶点(自然同时去掉与该顶点相关联的所有边)后，该图的连通分支数增加，则称该顶点为G的割点(cut-vertex)。
+当且仅当在G中存在与顶点v不同的两个顶点u和w，使所有的(u,w)道路都通过v时，v才是割点。
+
+对给定的图进行深搜，记录可以从起点到达终点的总路线数paths，以及图中经过的节点。当DFS结束后，比对paths与各节点出现的次数，如果有相同的点，由于任一路线不会走重复的点（开一个标记数组visited），所以这个点就是割点。
+要注意的是这道题的程序结束最后的答案要减2，因为路线中还包含了起点和终点（非关键点）
+用邻接表存储图，自定义一个类型type（含有arraylist 的对象），然后开一个包含n个节点的type型数组，即可以实现存储。
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Scanner;
+
+class Site{
+    ArrayList<Integer> link = new ArrayList<Integer>();
+    public void show(){
+        for(int x:link) System.out.print(x+" ");
+        System.out.println();
+    }
+
+}
+
+public class Main {
+
+    public static int n,m,u,v,paths;
+    public static int[] siteCount = new int[1010];
+    public static int[] records = new int[1010];
+    public static boolean[] visited = new boolean[1010];
+    public static Site[] S = new Site[1010];
+
+    public static void init(){
+        for(int i=0;i<=n;i++) S[i] = new Site();
+    }
+
+    public static void show(){
+        System.out.println("Stations layout:");
+        for(int i=1;i<=n;i++){
+            System.out.print(i+":");
+            S[i].show();
+        }
+    }
+
+    public static void DFS(int index,int x){//到达第x个点
+        if(x==v){//搜到终点，如何统计走过的点
+            paths++;
+            for(int i=0;i<=index;i++){//到达终点时，沿途经过的点
+            //  System.out.print(records[i]+" ");
+                int t = records[i];
+                siteCount[t]++;
+            }
+            //System.out.println();
+        }
+        for(int i=0;i<S[x].link.size();i++){
+            int next = S[x].link.get(i);
+            if(!visited[next]) {
+                visited[next] = true;
+                records[index+1] = next; 
+                DFS(index+1,next);
+                visited[next] = false;
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        // TODO Auto-generated method stub
+        Scanner in = new Scanner(System.in);
+        while(in.hasNext()){
+            n = in.nextInt();
+            m = in.nextInt();
+            init();
+            //Input
+            for(int i=0;i<m;i++){
+                u = in.nextInt();
+                v = in.nextInt();
+                S[u].link.add(v);
+                S[v].link.add(u);
+            }
+            u = in.nextInt();
+            v = in.nextInt();
+            long t1 = System.currentTimeMillis();
+            Arrays.fill(siteCount, 0);
+            Arrays.fill(visited, false);
+            paths = 0;
+            visited[u] = true;
+            records[0] = u;
+            DFS(0,u);
+            //System.out.println("paths:"+paths);
+            int ans = 0;
+            for(int i=1;i<=n;i++){
+                if(siteCount[i]==paths) {
+                    //System.out.println(i+","+siteCount[i]);
+                    ans++;
+                }
+            }
+            ans -= 2;//去掉起点和终点的情况
+            if(paths!=0) System.out.println(ans);
+            else System.out.println(-1);
+            long t2 = System.currentTimeMillis();
+            //System.out.println("Time cost:"+(t2-t1));
+        }
+    }
+
+}
