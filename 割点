@@ -117,7 +117,7 @@ public class Main {
 1 6
 则程序应该输出：
 2
-//答案 copy的别人的代码 先暂时存一下 明天再来仔细看看与
+//答案 copy的别人的代码 找不到来源了 找到的时候补上 是从CSDN搬过来的 如果不妥可以删
 //这是另一种思路，遍历所有从起点到终点的路径，记录下每个点在全部路径中出现的次数，若这个点遍历所有的的路径后，出现的次数与路径数相同，则说明每条路径
 //都需要经过这个点，如果删去，将无法连通起点到终点，所以其为割点，但要注意起点和终点也会在所有路径中出现，所以最后割点个数要减2。
 题目中描述的关键点，实际上是割点。[百度百科 割点](http://baike.baidu.com/link?url=CADx69vKhMWBfO_8DGociylhjOPxiY2yQ4N4ZqFDn8TPRLZwCVx1ITMtofY7HK_QOgp8lM5CbERD1XQvkSZMCK)
